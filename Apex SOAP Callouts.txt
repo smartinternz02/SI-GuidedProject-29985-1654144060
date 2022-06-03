@@ -1,0 +1,72 @@
+ *** ParkLocator Apex  class code :
+public class ParkLocator {
+
+    public static  List<String> Country(String country) {
+
+        ParkService.ParksImplPort  ParkService = new  ParkService.ParksImplPort(); // remove space
+
+        return ParkService.byCountry(country);
+
+    }
+
+}
+
+
+*** ParkLocatorTest Apex test class code :
+
+@isTest
+private class ParkLocatorTest {
+    @isTest static void testCallout() {              
+
+        Test.setMock(WebServiceMock.class, new ParkServiceMock ());
+
+        String country = 'United States';
+        List<String> result = ParkLocator.Country(country);
+
+        List<String> parks = new List<String>{'Yellowstone', 'Mackinac National Park', 'Yosemite'};
+
+         System.assertEquals(parks, result); 
+
+    }
+
+}
+
+
+*** ParkServiceMock  class code :
+@isTest
+
+global class ParkServiceMock implements WebServiceMock {
+
+   global void doInvoke(
+
+           Object stub,
+
+           Object request,
+
+           Map<String, Object> response,
+
+           String endpoint,
+
+           String soapAction,
+
+           String requestName,
+
+           String responseNS,
+
+           String responseName,
+
+           String responseType) {
+
+        // start - specify the response you want to send
+
+        ParkService.byCountryResponse response_x = new ParkService.byCountryResponse();
+
+        response_x.return_x = new List<String>{'Yellowstone', 'Mackinac National Park', 'Yosemite'};
+
+        // end
+
+        response.put('response_x', response_x); 
+
+   }
+
+}
